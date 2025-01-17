@@ -1,0 +1,68 @@
+# Gradle files
+.gradle/
+build/
+!gradle-wrapper.jar
+.gradle/
+
+# Android Studio specific
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Kotlin-specific
+*.kotlin_module
+
+# Local configuration file (keeps SDK path, etc.)
+local.properties
+
+# Log files
+*.log
+
+# Compiled bytecode
+*.class
+
+# APKs
+*.apk
+
+# Proguard
+*.pro
+
+# IntelliJ IDEA
+.idea/
+out/
+
+# Generated files
+gen/
+build/
+bin/
+
+# Keystore files (should not be committed for security)
+*.jks
+
+# Cache files
+*.cache
+*.temp
+
+# Android-specific
+*.xml~ 
+*.json~
+*.orig
+*.swp
+.DS_Store
+
+# Other unnecessary files
+*.so
+*.obj
+*.dll
+*.pdb
+*.tmp
+*.bak
+*.old
+*.swp
+*.lock
+
+# Miscellaneous
+*.log
+.idea/
+*.iml
