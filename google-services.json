@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "689644223111",
+    "project_id": "pic-a-day-cf73f",
+    "storage_bucket": "pic-a-day-cf73f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:689644223111:android:25517d18d06dde8f4e1622",
+        "android_client_info": {
+          "package_name": "com.example.pic_a_day_frontend"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDd86R1zacyevFUK9OYyf_Imo_o_TQqv9E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
