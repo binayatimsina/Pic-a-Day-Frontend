@@ -33,6 +33,7 @@ import com.example.pic_a_day_frontend.User.LoginRequest
 import com.example.pic_a_day_frontend.User.NewUserInfo
 import com.example.pic_a_day_frontend.ui.theme.PicaDayFrontendTheme
 import com.example.pic_a_day_frontend.utils.RetrofitInstance
+import com.google.firebase.FirebaseApp
 import kotlinx.coroutines.launch
 
 class Login : ComponentActivity() {
@@ -43,6 +44,7 @@ class Login : ComponentActivity() {
             PicaDayFrontendTheme {
                 var message = intent.getStringExtra("message")
                 if (message == null) message = ""
+                FirebaseApp.initializeApp(this)
                 LoginUI(message)
             }
         }

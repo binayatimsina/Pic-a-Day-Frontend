@@ -19,4 +19,5 @@ interface ApiInterface {
 
     @POST("login")
     suspend fun loginUser(@Body body: LoginRequest):Response<LoginResponse>
+
 }
