@@ -1,6 +1,7 @@
 package com.example.pic_a_day_frontend
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -50,14 +51,14 @@ class Login : ComponentActivity() {
         }
     }
 
-    @SuppressLint("CoroutineCreationDuringComposition")
+    @SuppressLint("CoroutineCreationDuringComposition", "CommitPrefEdits")
     @Composable
     fun LoginUI(message: Any) {
         if (message != "") {
             Toast.makeText(this, message.toString(), Toast.LENGTH_LONG).show()
         }
-        val username = remember { mutableStateOf("") }
-        val password = remember { mutableStateOf("") }
+        val username = remember { mutableStateOf("binaya") }
+        val password = remember { mutableStateOf("binaya") }
         val login = remember { mutableStateOf(false) }
         val coroutineScope = rememberCoroutineScope()
 
@@ -71,7 +72,11 @@ class Login : ComponentActivity() {
                 try {
                     val res = RetrofitInstance.api.loginUser(body) // res is a Response<MyResponse>
                     if (res.isSuccessful) {
+//                        this@Login.getPreferences(Context.MODE_PRIVATE).edit().putString("username", username.value.toString())
+                        getSharedPreferences("Pic-a-Day", Context.MODE_PRIVATE).edit().putString("username", username.value).apply()
+                        getSharedPreferences("Pic-a-Day", Context.MODE_PRIVATE).edit().putString("token", res.body()!!.token).apply()
                         println("Response Body: ${res.body()}") // Prints the parsed response body
+
                         val intent = Intent(this@Login, HomePage::class.java)
                         startActivity(intent)
                     } else {

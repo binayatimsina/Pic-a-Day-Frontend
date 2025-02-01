@@ -1,6 +1,7 @@
 package com.example.pic_a_day_frontend
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -55,6 +56,10 @@ class HomePage : ComponentActivity() {
     @Composable
     fun HomePageUI() {
         val navController = rememberNavController()
+//        val username1 = this@HomePage.getPreferences(Context.MODE_PRIVATE).getString("username", null)
+        val username = getSharedPreferences("Pic-a-Day", Context.MODE_PRIVATE).getString("username", null)
+        val token = getSharedPreferences("Pic-a-Day", Context.MODE_PRIVATE).getString("token", null)
+        println("Token is $token")
         val bottomTabList = listOf(
             BottomNavigationItem(
                 title = "Home",
@@ -109,7 +114,7 @@ class HomePage : ComponentActivity() {
                 startDestination = "Home",
             ) {
                 composable("Home") {
-                    HomeScreen() // Replace with your composable
+                    HomeScreen(username!!, token!!) // Replace with your composable
                 }
                 composable("Week") {
                     WeekScreen() // Replace with your composable

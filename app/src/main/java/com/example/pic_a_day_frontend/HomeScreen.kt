@@ -1,6 +1,10 @@
 package com.example.pic_a_day_frontend
 
+import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
 import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -26,30 +30,40 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
+import com.example.pic_a_day_frontend.User.UserDataBody
+import com.example.pic_a_day_frontend.utils.RetrofitInstance
 import com.google.firebase.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.storage
+import kotlinx.coroutines.launch
 import java.util.UUID
 
 //import com.google.firebase.storage.storage
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen() {
-
+fun HomeScreen(username: String, token: String) {
+    val coroutineScope = rememberCoroutineScope()
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
+    var savedImageURL by remember { mutableStateOf("") }
+    var imageUploaded by remember { mutableStateOf(false) }
     var note by remember { mutableStateOf("") }
+    var dataSaved by remember { mutableStateOf(false) }
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         selectedImageUri = uri
     }
+
+
     Scaffold(
         topBar = {
             TopAppBar(title = {
@@ -63,6 +77,25 @@ fun HomeScreen() {
                 }
             })}
     ) { innerPadding ->
+        if (imageUploaded) {
+            imageUploaded = false
+            val body = UserDataBody(imageURL = savedImageURL, note = note, username = username)
+            val token = "Bearer $token"
+            coroutineScope.launch {
+                try {
+                    val res = RetrofitInstance.api.uploadData(body = body, token = token) // res is a Response<MyResponse>
+                    if (res.isSuccessful) {
+                        println("SuccessFull ${res.body()!!.message}")
+                        dataSaved = true
+                    } else {
+                        println(res.errorBody().toString())
+                    }
+
+                } catch (e: Exception) {
+                    println("Exception: $e") // Logs any exceptions
+                }
+            }
+        }
         Column(modifier = Modifier.padding(innerPadding),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally) {
@@ -81,28 +114,36 @@ fun HomeScreen() {
                         painter = rememberAsyncImagePainter(selectedImageUri), "",
                         Modifier.size(400.dp)
                     )
-                    OutlinedTextField(
-                        value = note,
-                        onValueChange = {
-                            note = it
-                        },
-                        label = { Text("Add Note") },
-                        modifier = Modifier.fillMaxWidth().padding(20.dp),
-                        maxLines = 5,
-                    )
 
-
-                    Button(onClick = {
-                        uploadImageToFirebase(
-                            selectedImageUri!!,
-                            {
-                                //TODO Make a call to store the image link and Note to the database
-                                println(it)
+                    if (!dataSaved) {
+                        OutlinedTextField(
+                            value = note,
+                            onValueChange = {
+                                note = it
                             },
-                            { println(it) }
-                    ) }) {
-                        Text("Upload")
+                            label = { Text("Add Note") },
+                            modifier = Modifier.fillMaxWidth().padding(20.dp),
+                            maxLines = 5,
+                        )
+
+                        Button(onClick = {
+                            uploadImageToFirebase(
+                                selectedImageUri!!,
+                                {
+                                    imageUploaded = true
+                                    //TODO Make a call to store the image link and Note to the database
+                                    println(it)
+                                    savedImageURL = it
+                                },
+                                { println(it) }
+                            )
+                        }) {
+                            Text("Upload")
+                        }
+                    } else {
+                        Text(note, modifier = Modifier.padding(20.dp))
                     }
+
                 }
             }
         }
@@ -126,6 +167,6 @@ fun uploadImageToFirebase(imageUri: Uri, onSuccess: (String) -> Unit, onFailure:
             }
         }
         .addOnFailureListener { exception ->
-            onFailure(exception) // Handle errors
+            onFailure(exception)
         }
 }
